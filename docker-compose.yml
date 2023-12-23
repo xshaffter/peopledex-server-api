@@ -1,5 +1,16 @@
 version: '3'
 services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/Dockerfile
+    restart: always
+    ports:
+      - 80:80
+    links:
+      - app:app
+    depends_on:
+      - app
   app:
     build:
       context: .
