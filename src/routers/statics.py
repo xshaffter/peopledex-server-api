@@ -1,6 +1,7 @@
 import base64
 
 import boto3
+from common.fastapi.aws.manager import AwsConfig
 from common.fastapi.routing import get, BaseRouter
 from common.fastapi.schemas import HTTPResponseModel
 from starlette import status
@@ -11,8 +12,9 @@ class StaticsRouter(BaseRouter):
 
     @get('/{route}')
     def get_item(self, route: str):
+        aws = AwsConfig()
         bucket = 'para-mada-personal-bucket'
-        s3 = boto3.client('s3')
+        s3 = aws.get_s3_client()
         print('requesting ' + route)
 
         if not route:
