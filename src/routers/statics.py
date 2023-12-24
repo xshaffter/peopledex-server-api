@@ -4,6 +4,7 @@ import boto3
 from common.fastapi.routing import get, BaseRouter
 from common.fastapi.schemas import HTTPResponseModel
 from starlette import status
+from fastapi.responses import Response
 
 
 class StaticsRouter(BaseRouter):
@@ -23,9 +24,4 @@ class StaticsRouter(BaseRouter):
         response = s3.get_object(Bucket=bucket, Key=key)
 
         image = response['Body'].read()
-        return {
-            'headers': {"Content-Type": response["ContentType"]},
-            'statusCode': 200,
-            'body': base64.b64encode(image).decode('utf-8'),
-            'isBase64Encoded': True
-        }
+        return Response(image, media_type=response["ContentType"])
