@@ -35,3 +35,12 @@ class ProfileRequestSchema(BaseModel):
 
     class Config:
         model = Profile
+
+
+class SimplifiedProfileSchema(BaseModel):
+    id: int
+    name: Optional[str]
+    birth_date: Optional[date]
+    image_url: str
+    class Config:
+        from_attributes = True

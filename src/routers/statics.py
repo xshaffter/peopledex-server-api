@@ -1,11 +1,14 @@
-import base64
+import uuid
 
-import boto3
 from common.fastapi.aws.manager import AwsConfig
-from common.fastapi.routing import get, BaseRouter
+from common.fastapi.db import CRUDDal, get_dal_dependency
+from common.fastapi.routing import get, BaseRouter, post, put
 from common.fastapi.schemas import HTTPResponseModel
-from starlette import status
+from fastapi import UploadFile, Depends
 from fastapi.responses import Response
+from starlette import status
+
+from src.db.models.profile import Profile
 
 
 class StaticsRouter(BaseRouter):
@@ -27,3 +30,24 @@ class StaticsRouter(BaseRouter):
 
         image = response['Body'].read()
         return Response(image, media_type=response["ContentType"])
+
+    @post("/", response_model=HTTPResponseModel)
+    async def create_upload_file(self, file: UploadFile):
+        aws = AwsConfig()
+        bucket = 'para-mada-personal-bucket'
+        s3 = aws.get_s3_client()
+        filename = f"{uuid.uuid4()}_{file.filename}"
+        s3.upload_fileobj(file.file, bucket, f'statics/{filename}')
+        return HTTPResponseModel(status_code=201, detail=dict(filename=filename))
+
+    @put("/profile/{profile_id}", response_model=HTTPResponseModel)
+    async def update_profile_photo(self, profile_id: int, file: UploadFile, dal: CRUDDal = Depends(get_dal_dependency(CRUDDal, model=Profile))):
+        aws = AwsConfig()
+        bucket = 'para-mada-personal-bucket'
+        s3 = aws.get_s3_client()
+        filename = f"{uuid.uuid4()}_{file.filename}"
+        s3.upload_fileobj(file.file, bucket, f'statics/{filename}')
+        item_query: Profile = dal.get_object_query(id=profile_id)
+        item_query.update(dict(image_url=f'http://api.para-mada.com/statics/{filename}'))
+        dal.commit()
+        return HTTPResponseModel(status_code=status.HTTP_200_OK, detail=dict(profile=item_query.first().name, filename=filename))
