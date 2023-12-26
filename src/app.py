@@ -6,10 +6,12 @@ from pydantic import ValidationError
 
 from .routers.profile import ProfileRouter
 from .routers.statics import StaticsRouter
+from .routers.user import UserRouter
 
 main_app.include_router(ProfileRouter(prefix='/profiles', tags=['profiles']))
 
 main_app.include_router(StaticsRouter(prefix='/statics', tags=['statics']))
+main_app.include_router(UserRouter(prefix='/users', tags=['users']))
 
 
 # noinspection PyUnusedLocal

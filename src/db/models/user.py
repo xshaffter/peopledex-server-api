@@ -2,7 +2,7 @@ from common.fastapi.db import Base
 from sqlalchemy import Column, String, Integer, Date, Float
 
 
-class Profile(Base):
+class User(Base):
     __schema__ = 'prod'
 
     name = Column(String)
