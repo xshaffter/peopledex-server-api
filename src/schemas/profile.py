@@ -11,14 +11,18 @@ from ..db.models.profile import Profile
 class ProfileSchema(BaseModel):
     id: int
     name: Optional[str]
-    height_cm: Optional[int]
-    weight_kg: Optional[float]
     birth_date: Optional[date]
     image_url: str
     vertical_image_url: Optional[str]
-    feet: Optional[int]
-    bottoms: Optional[int]
-    tops: Optional[int]
+
+    # Measures
+    height_cm: Optional[int]
+    weight_kg: Optional[float]
+    feet_size: Optional[str]
+    bottoms_size: Optional[str]
+    tops_size: Optional[str]
+
+    # Basics
     flower: Optional[str]
     color: Optional[str]
     serie: Optional[str]
@@ -33,14 +37,18 @@ class ProfileSchema(BaseModel):
 
 class ProfileRequestSchema(BaseModel):
     name: Optional[str]
-    height_cm: Optional[int]
-    weight_kg: Optional[float]
     birth_date: Optional[date]
     image_url: str
     vertical_image_url: Optional[str]
-    feet: Optional[int]
-    bottoms: Optional[int]
-    tops: Optional[int]
+
+    # Measures
+    height_cm: Optional[int]
+    weight_kg: Optional[float]
+    feet_size: Optional[str]
+    bottoms_size: Optional[str]
+    tops_size: Optional[str]
+
+    # Basics
     flower: Optional[str]
     color: Optional[str]
     serie: Optional[str]
@@ -56,5 +64,6 @@ class SimplifiedProfileSchema(BaseModel):
     name: Optional[str]
     birth_date: Optional[date]
     image_url: str
+
     class Config:
         from_attributes = True

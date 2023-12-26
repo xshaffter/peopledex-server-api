@@ -14,9 +14,9 @@ class Profile(Base):
     vertical_image_url = Column(String)
 
     # header
-    feet = Column(Integer)
-    bottoms = Column(Integer)
-    tops = Column(Integer)
+    feet_size = Column(String)
+    bottoms_size = Column(String)
+    tops_size = Column(String)
 
     # Basics
     flower = Column(String)
