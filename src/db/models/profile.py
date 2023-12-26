@@ -12,8 +12,17 @@ class Profile(Base):
     birth_date = Column(Date)
     image_url = Column(String)
     vertical_image_url = Column(String)
+
+    # header
     feet = Column(Integer)
     bottoms = Column(Integer)
     tops = Column(Integer)
+
+    # Basics
+    flower = Column(String)
+    color = Column(String)
+    serie = Column(String)
+    music_group = Column(String)
+    movie = Column(String)
 
     complexities = relationship("ComplexLike", back_populates="profile")

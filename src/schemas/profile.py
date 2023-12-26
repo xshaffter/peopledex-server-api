@@ -19,6 +19,11 @@ class ProfileSchema(BaseModel):
     feet: Optional[int]
     bottoms: Optional[int]
     tops: Optional[int]
+    flower: Optional[str]
+    color: Optional[str]
+    serie: Optional[str]
+    music_group: Optional[str]
+    movie: Optional[str]
     complexities: List[ComplexLikeSchema]
 
     class Config:
@@ -35,6 +40,11 @@ class ProfileRequestSchema(BaseModel):
     feet: Optional[int]
     bottoms: Optional[int]
     tops: Optional[int]
+    flower: Optional[str]
+    color: Optional[str]
+    serie: Optional[str]
+    music_group: Optional[str]
+    movie: Optional[str]
 
     class Config:
         model = Profile
