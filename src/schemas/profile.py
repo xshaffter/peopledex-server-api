@@ -1,11 +1,11 @@
 from datetime import date
 from typing import Optional, List
 
-from .complex_like import ComplexLikeSchema
-from ..db.models.complex_like import ComplexLike
-from ..db.models.profile import Profile
-
 from pydantic import BaseModel
+
+from .complex_like import ComplexLikeSchema
+from .wishlist_item import WishlistItemSchema
+from ..db.models.profile import Profile
 
 
 class ProfileSchema(BaseModel):
@@ -25,6 +25,7 @@ class ProfileSchema(BaseModel):
     music_group: Optional[str]
     movie: Optional[str]
     complexities: List[ComplexLikeSchema]
+    wishlist: List[WishlistItemSchema]
 
     class Config:
         from_attributes = True
