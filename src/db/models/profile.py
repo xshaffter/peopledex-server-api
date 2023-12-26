@@ -26,3 +26,4 @@ class Profile(Base):
     movie = Column(String)
 
     complexities = relationship("ComplexLike", back_populates="profile")
+    wishlist = relationship("WishlistItem", back_populates="profile")
