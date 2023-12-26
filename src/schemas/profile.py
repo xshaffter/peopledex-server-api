@@ -1,6 +1,8 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
+from .complex_like import ComplexLikeSchema
+from ..db.models.complex_like import ComplexLike
 from ..db.models.profile import Profile
 
 from pydantic import BaseModel
@@ -17,6 +19,7 @@ class ProfileSchema(BaseModel):
     feet: Optional[int]
     bottoms: Optional[int]
     tops: Optional[int]
+    complexities: List[ComplexLikeSchema]
 
     class Config:
         from_attributes = True

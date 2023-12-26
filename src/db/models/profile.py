@@ -1,5 +1,6 @@
 from common.fastapi.db import Base
 from sqlalchemy import Column, String, Integer, Date, Float
+from sqlalchemy.orm import relationship
 
 
 class Profile(Base):
@@ -14,3 +15,5 @@ class Profile(Base):
     feet = Column(Integer)
     bottoms = Column(Integer)
     tops = Column(Integer)
+
+    complexities = relationship("ComplexLike", back_populates="profile")
