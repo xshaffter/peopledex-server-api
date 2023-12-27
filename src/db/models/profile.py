@@ -1,19 +1,21 @@
 from common.fastapi.db import Base
-from sqlalchemy import Column, String, Integer, Date, Float
+from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey
 from sqlalchemy.orm import relationship
 
 
 class Profile(Base):
     __schema__ = 'prod'
 
+    created_by_id = Column(Integer, ForeignKey('prod.users.id'))
+
     name = Column(String)
-    height_cm = Column(Integer)
-    weight_kg = Column(Float)
     birth_date = Column(Date)
     image_url = Column(String)
     vertical_image_url = Column(String)
 
     # header
+    height_cm = Column(Integer)
+    weight_kg = Column(Float)
     feet_size = Column(String)
     bottoms_size = Column(String)
     tops_size = Column(String)

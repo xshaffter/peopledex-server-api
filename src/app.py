@@ -4,11 +4,15 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
+from .middlewares.auth_middleware import AuthMiddleware
+from .routers.authentication import AuthRouter
 from .routers.complex_like import ComplexLikeRouter
 from .routers.profile import ProfileRouter
 from .routers.statics import StaticsRouter
 from .routers.user import UserRouter
 from .routers.wishlist_item import WishlistItemRouter
+
+main_app.add_middleware(AuthMiddleware)
 
 main_app.include_router(ProfileRouter(prefix='/profiles', tags=['profiles']))
 
@@ -16,6 +20,7 @@ main_app.include_router(StaticsRouter(prefix='/statics', tags=['statics']))
 main_app.include_router(UserRouter(prefix='/users', tags=['users']))
 main_app.include_router(ComplexLikeRouter(prefix='/complex-likes', tags=['complex-likes']))
 main_app.include_router(WishlistItemRouter(prefix='/wishlist', tags=['wishlist']))
+main_app.include_router(AuthRouter(prefix='/auth', tags=['authentication']))
 
 
 # noinspection PyUnusedLocal

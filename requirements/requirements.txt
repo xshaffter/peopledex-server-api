@@ -1,4 +1,7 @@
 fastapi-common==0.3.11.2
-psycopg2==2.9.5
+psycopg2-binary==2.9.5
 python-dotenv
 python-multipart
+passlib
+bcrypt
+python-jose
