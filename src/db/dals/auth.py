@@ -44,7 +44,7 @@ class AuthDAL(Dal):
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(minutes=30)
+            expire = datetime.utcnow() + timedelta(minutes=43200)  # 30 days
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, self._parameters.variables.SECRET_KEY, algorithm=self._parameters.variables.ALGORITHM)
         return encoded_jwt
