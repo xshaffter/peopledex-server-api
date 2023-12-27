@@ -26,5 +26,6 @@ class UserRouter(GenericBaseRouter[User]):
     def get_friends(self, token: str = Depends(oauth2_schema), dal: UserDAL = Depends(get_dal_dependency(UserDAL))):
         user = dal.get_current_user(token)
         profile_dal: ProfileDAL = dal.get_dal(ProfileDAL)
-
-        return profile_dal.list(created_by_id=user.id)
+        result = profile_dal.list(created_by_id=user.id)
+        result = filter(lambda profile: profile.id != user.profile_id, result)
+        return result
