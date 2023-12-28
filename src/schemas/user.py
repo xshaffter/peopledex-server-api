@@ -1,7 +1,7 @@
 from typing import Dict
 
 from fastapi import Body
-from pydantic import BaseModel, model_validator, field_validator
+from pydantic import BaseModel, model_validator, field_validator, ValidationError
 
 from ..db.models.profile import Profile
 
@@ -38,7 +38,8 @@ class ChangePasswordSchema(BaseModel):
 
     @model_validator(mode='before')
     def validator(self):
-        assert self["password"] == self["password_confirm"], "Las contraseñas deben coincidir"
+        if self["password"] != self["password_confirm"]:
+            raise ValidationError("Las contraseñas deben coincidir")
         return self
 
 
