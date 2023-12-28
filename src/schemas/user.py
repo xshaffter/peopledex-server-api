@@ -39,6 +39,9 @@ class ChangePasswordSchema(BaseModel):
 
     @model_validator(mode='before')
     def validator(self):
+        if type(self) == bytes:
+            raise RequestValidationError(self)
+
         if self["password"] != self["password_confirm"]:
             raise RequestValidationError("Las contraseñas deben coincidir")
         return self
