@@ -45,7 +45,8 @@ class UserDAL(CRUDDal[User]):
     def change_password(self, data, token):
         user = self.get_current_user(token)
         digested_data = dict(data)
-        digested_data['password'] = Hash.bcrypt(data.password)
+        del digested_data['password']
+        digested_data['password_hash'] = Hash.bcrypt(data["password"])
         return self.update(digested_data, id=user.id)
 
     def create(self, data) -> User:
