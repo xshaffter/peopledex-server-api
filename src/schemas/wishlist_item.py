@@ -5,7 +5,7 @@ from src.db.models.wishlist_item import WishlistItem
 
 class WishlistItemSchema(BaseModel):
     name: str
-    favorite: str
+    url: str
 
     class Config:
         from_attributes = True
@@ -13,7 +13,7 @@ class WishlistItemSchema(BaseModel):
 
 class WishlistItemRequestSchema(BaseModel):
     name: str
-    favorite: str
+    url: str
     profile_id: int
 
     class Config:
