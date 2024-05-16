@@ -73,6 +73,11 @@ class SimplifiedProfileSchema(BaseModel):
     name: Optional[str]
     birth_date: Optional[date]
     image_url: str
+    country: Optional[str]
+    state: Optional[str]
+    city: Optional[str]
+    address: Optional[str]
+    updated_on: Optional[date]
 
     class Config:
         from_attributes = True
