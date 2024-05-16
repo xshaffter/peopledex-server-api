@@ -32,7 +32,7 @@ class ProfileSchema(BaseModel):
     state: Optional[str]
     city: Optional[str]
     address: Optional[str]
-    updated_on: Optional[date]
+    updated_on: Optional[datetime]
     complexities: List[ComplexLikeSchema]
     wishlist: List[WishlistItemSchema]
 
