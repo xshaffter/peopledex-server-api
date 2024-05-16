@@ -28,6 +28,11 @@ class ProfileSchema(BaseModel):
     serie: Optional[str]
     music_group: Optional[str]
     movie: Optional[str]
+    country: Optional[str]
+    state: Optional[str]
+    city: Optional[str]
+    address: Optional[str]
+    updated_on: Optional[date]
     complexities: List[ComplexLikeSchema]
     wishlist: List[WishlistItemSchema]
 
@@ -54,6 +59,10 @@ class ProfileRequestSchema(BaseModel):
     serie: Optional[str]
     music_group: Optional[str]
     movie: Optional[str]
+    country: Optional[str]
+    state: Optional[str]
+    city: Optional[str]
+    address: Optional[str]
 
     class Config:
         model = Profile
