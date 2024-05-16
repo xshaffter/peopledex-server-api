@@ -84,7 +84,10 @@ class SimplifiedProfileSchema(BaseModel):
     def left_days(self) -> Optional[int]:
         if self.birth_date is None:
             return None
-        return (date(datetime.now().year, self.birth_date.month, self.birth_date.day) - date.today()).days
+        days = (date(datetime.now().year, self.birth_date.month, self.birth_date.day) - date.today()).days
+        if days < 0:
+            days = days + 365
+        return days
 
     class Config:
         from_attributes = True
