@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional, List
 
 from pydantic import BaseModel
@@ -77,7 +77,7 @@ class SimplifiedProfileSchema(BaseModel):
     state: Optional[str]
     city: Optional[str]
     address: Optional[str]
-    updated_on: Optional[date]
+    updated_on: Optional[datetime]
 
     class Config:
         from_attributes = True

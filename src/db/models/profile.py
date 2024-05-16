@@ -1,5 +1,5 @@
 from common.fastapi.db import Base
-from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 
 
@@ -30,7 +30,7 @@ class Profile(Base):
     state = Column(String)
     city = Column(String)
     address = Column(String)
-    updated_on = Column(Date)
+    updated_on = Column(TIMESTAMP)
 
     complexities = relationship("ComplexLike", back_populates="profile")
     wishlist = relationship("WishlistItem", back_populates="profile")
