@@ -81,7 +81,9 @@ class SimplifiedProfileSchema(BaseModel):
 
     @computed_field
     @property
-    def left_days(self) -> int:
+    def left_days(self) -> Optional[int]:
+        if self.updated_on is None:
+            return None
         return (date(datetime.now().year, self.birth_date.month, self.birth_date.day) - date.today()).days
 
     class Config:
