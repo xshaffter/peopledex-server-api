@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 from .complex_like import ComplexLikeSchema
 from .wishlist_item import WishlistItemSchema
@@ -78,6 +78,11 @@ class SimplifiedProfileSchema(BaseModel):
     city: Optional[str]
     address: Optional[str]
     updated_on: Optional[datetime]
+
+    @computed_field
+    @property
+    def left_days(self) -> int:
+        return (date(datetime.now().year, self.birth_date.month, self.birth_date.day) - date.today()).days
 
     class Config:
         from_attributes = True
