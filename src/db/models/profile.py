@@ -26,6 +26,11 @@ class Profile(Base):
     serie = Column(String)
     music_group = Column(String)
     movie = Column(String)
+    country = Column(String)
+    state = Column(String)
+    city = Column(String)
+    address = Column(String)
+    updated_on = Column(Date)
 
     complexities = relationship("ComplexLike", back_populates="profile")
     wishlist = relationship("WishlistItem", back_populates="profile")
