@@ -14,3 +14,4 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
     async def get_simple_list(self, dal: CRUDDal = Depends(get_dal_dependency(CRUDDal, model=Profile))) -> List:
         items = dal.list()
         return items
+
