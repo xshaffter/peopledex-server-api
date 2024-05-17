@@ -45,6 +45,7 @@ class ProfileRequestSchema(BaseModel):
     birth_date: Optional[date]
     image_url: str
     vertical_image_url: Optional[str]
+    created_by_id: int
 
     # Measures
     height_cm: Optional[int]

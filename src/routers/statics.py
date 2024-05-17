@@ -47,7 +47,7 @@ class StaticsRouter(BaseRouter):
         s3 = aws.get_s3_client()
         filename = f"{uuid.uuid4()}_{file.filename}"
         s3.upload_fileobj(file.file, bucket, f'statics/{filename}')
-        item_query: Profile = dal.get_object_query(id=profile_id)
-        item_query.update(dict(image_url=f'http://api.para-mada.com/statics/{filename}'))
+        print(id)
+        item = dal.update(dict(image_url=f'http://api.para-mada.com/statics/{filename}'), dict(id=profile_id))
         dal.commit()
-        return HTTPResponseModel(status_code=status.HTTP_200_OK, detail=dict(profile=item_query.first().name, filename=filename))
+        return HTTPResponseModel(status_code=status.HTTP_200_OK, detail=dict(profile=item.name, filename=filename))
