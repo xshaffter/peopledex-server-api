@@ -19,6 +19,6 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
     @post('/custom/create', response_model=ProfileSchema)
     async def custom_create(self, request: ProfileRequestSchema,
                               dal: CRUDDal = Depends(get_dal_dependency(ProfileDAL))):
-        data = request.data
+        data = request.data.dict()
         result = dal.create(data)
         return result
