@@ -1,7 +1,7 @@
 from typing import List
 
 from common.fastapi.db import CRUDDal, get_dal_dependency
-from common.fastapi.routing import GenericBaseCRUDRouter, get
+from common.fastapi.routing import GenericBaseCRUDRouter, get, post
 from fastapi import Depends
 
 from ..db.models.profile import Profile
@@ -15,3 +15,9 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         items = dal.list()
         return items
 
+    @post('/create', response_model=ProfileSchema)
+    async def get_simple_list(self, request: ProfileRequestSchema,
+                              dal: CRUDDal = Depends(get_dal_dependency(CRUDDal, model=Profile))):
+        data = request.data
+        result = dal.create(data)
+        return result
