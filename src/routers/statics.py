@@ -48,6 +48,6 @@ class StaticsRouter(BaseRouter):
         filename = f"{uuid.uuid4()}_{file.filename}"
         s3.upload_fileobj(file.file, bucket, f'statics/{filename}')
         print(id)
-        item = dal.update(dict(image_url=f'http://api.para-mada.com/statics/{filename}'), dict(id=profile_id))
+        item = dal.update(dict(image_url=f'http://api.para-mada.com/statics/{filename}'), id=profile_id)
         dal.commit()
         return HTTPResponseModel(status_code=status.HTTP_200_OK, detail=dict(profile=item.name, filename=filename))
