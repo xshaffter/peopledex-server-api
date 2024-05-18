@@ -1,10 +1,12 @@
 from typing import List
 
 from common.fastapi.db import CRUDDal, get_dal_dependency
-from common.fastapi.routing import GenericBaseCRUDRouter, get, post
-from common.fastapi.schemas import BasicRequestSchema
+from common.fastapi.routing import GenericBaseCRUDRouter, get, post, put, delete
+from common.fastapi.schemas import BasicRequestSchema, HTTPResponseModel, HTTP_200_UPDATED, HTTP_404_DETAIL
 from fastapi import Depends
 
+from src.db.dals.auth import oauth2_schema
+from ..db.dals.user import UserDAL
 from ..db.models.profile import Profile
 from ..db.dals.profile import ProfileDAL
 from ..schemas.profile import ProfileRequestSchema, ProfileSchema, SimplifiedProfileSchema
@@ -13,16 +15,64 @@ from ..schemas.profile import ProfileRequestSchema, ProfileSchema, SimplifiedPro
 class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequestSchema]):
 
     @get('/simple', response_model=List[SimplifiedProfileSchema])
-    async def get_simple_list(self, dal: CRUDDal = Depends(get_dal_dependency(CRUDDal, model=Profile))) -> List:
-        items = dal.list()
+    async def get_simple_list(self,
+                              token: str = Depends(oauth2_schema),
+                              dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))) -> List:
+        user_dal = dal.get_dal(UserDAL)
+        user = user_dal.get_current_user(token)
+
+        items = dal.list(created_by_id=user.id)
         return items
 
-    @post('/custom/create', response_model=ProfileSchema)
+    @post('/create', response_model=ProfileSchema)
     async def custom_create(self, request: BasicRequestSchema[ProfileRequestSchema],
-                              dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+                            token: str = Depends(oauth2_schema),
+                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+        user_dal = dal.get_dal(UserDAL)
+        user = user_dal.get_current_user(token)
+
         data = request.data.dict()
-        profile_id = data.pop('created_by_id')
-        profile_owner: Profile = dal.get_object(id=profile_id)
-        data['created_by_id'] = profile_owner.created_by_id
+        data['created_by_id'] = user.id
         result = dal.create(data)
         return result
+
+    @put('/detail/{profile_id}', response_model=HTTPResponseModel)
+    async def update_detail(self, profile_id: int, request: BasicRequestSchema[ProfileRequestSchema],
+                            token: str = Depends(oauth2_schema),
+                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+        user_dal = dal.get_dal(UserDAL)
+        user = user_dal.get_current_user(token)
+        desired_profile = dal.get_object_or_404(id=profile_id)
+
+        if desired_profile.created_by_id != user.id:
+            return HTTP_404_DETAIL
+
+        data = request.data.dict()
+        dal.update(data, id=profile_id)
+        return HTTP_200_UPDATED
+
+    @delete('/detail/{profile_id}', response_model=HTTPResponseModel)
+    async def remove(self, profile_id: int, token: str = Depends(oauth2_schema),
+                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+        user_dal = dal.get_dal(UserDAL)
+        user = user_dal.get_current_user(token)
+        desired_profile = dal.get_object_or_404(id=profile_id)
+
+        if desired_profile.created_by_id != user.id:
+            return HTTP_404_DETAIL
+
+        dal.delete(id=profile_id)
+
+        return HTTP_200_UPDATED
+
+    @get('/detail/{profile_id}', response_model=ProfileSchema)
+    async def detail(self, profile_id: int, token: str = Depends(oauth2_schema),
+                         dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+        user_dal = dal.get_dal(UserDAL)
+        user = user_dal.get_current_user(token)
+        desired_profile = dal.get_object_or_404(id=profile_id)
+
+        if desired_profile.created_by_id != user.id:
+            return HTTP_404_DETAIL
+
+        return desired_profile
