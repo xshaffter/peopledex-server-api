@@ -43,5 +43,5 @@ class Profile(Base):
 
     complexities = relationship("ComplexLike", back_populates="profile")
     wishlist = relationship("WishlistItem", back_populates="profile")
-    friendships = relationship("ProfileFriendship", back_populates="profile_from",
+    friendships = relationship("ProfileFriendship", back_populates="profile_from", lazy='dynamic',
                                foreign_keys=[ProfileFriendship.profile_from_id])

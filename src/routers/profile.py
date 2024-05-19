@@ -3,7 +3,7 @@ from typing import List
 from common.fastapi.db import CRUDDal, get_dal_dependency
 from common.fastapi.routing import GenericBaseCRUDRouter, get, post, put, delete
 from common.fastapi.schemas import BasicRequestSchema, HTTPResponseModel, HTTP_200_UPDATED, HTTP_404_DETAIL
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 
 from src.db.dals.auth import oauth2_schema
 from ..db.dals.user import UserDAL
@@ -26,21 +26,22 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
 
     @post('/create', response_model=ProfileSchema)
     def create(self, request: BasicRequestSchema[ProfileRequestSchema],
-                            token: str = Depends(oauth2_schema),
-                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+               token: str = Depends(oauth2_schema),
+               dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
         friendship_dal = dal.get_dal(ProfileFriendshipDAL)
         user = user_dal.get_current_user(token)
         data = request.data.model_dump()
         result = dal.create(data)
-        friendship = friendship_dal.create(dict(profile_from_id=user.profile_id, profile_to_id=result.id, safety_correction=0))
+        friendship = friendship_dal.create(
+            dict(profile_from_id=user.profile_id, profile_to_id=result.id, safety_correction=0))
 
         friendship_dal.commit()
         return result
 
     @post('/free/create', response_model=ProfileSchema)
     async def free_create(self, request: BasicRequestSchema[ProfileRequestSchema],
-                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+                          dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
 
         data = request.data.model_dump()
         result = dal.create(data)
@@ -63,7 +64,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
 
     @delete('/detail/{profile_id}', response_model=HTTPResponseModel)
     async def remove(self, profile_id: int, token: str = Depends(oauth2_schema),
-                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+                     dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
         user = user_dal.get_current_user(token)
         desired_profile = dal.get_object_or_404(id=profile_id)
@@ -77,12 +78,12 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
 
     @get('/detail/{profile_id}', response_model=ProfileSchema)
     async def detail(self, profile_id: int, token: str = Depends(oauth2_schema),
-                         dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+                     dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
         user = user_dal.get_current_user(token)
         desired_profile = dal.get_object_or_404(id=profile_id)
 
-        if desired_profile.created_by_id != user.id:
-            return HTTP_404_DETAIL
+        if not user.profile.friendships.filter(ProfileFriendship.profile_to_id == profile_id).all():
+            raise HTTPException(status_code=404)
 
         return desired_profile
