@@ -25,9 +25,8 @@ class UserRouter(GenericBaseRouter[User]):
     @get("/friends", response_model=List[SimplifiedProfileSchema])
     def get_friends(self, token: str = Depends(oauth2_schema), dal: UserDAL = Depends(get_dal_dependency(UserDAL))):
         user = dal.get_current_user(token)
-        profile_dal: ProfileDAL = dal.get_dal(ProfileDAL)
-        result = profile_dal.list(created_by_id=user.id)
-        result = filter(lambda profile: profile.id != user.profile_id, result)
+        user_profile: Profile = user.profile
+        result = [friendship.profile_to for friendship in user_profile.friendships]
         return result
 
     @get("/profile", response_model=ProfileSchema)

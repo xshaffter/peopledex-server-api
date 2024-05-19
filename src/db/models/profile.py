@@ -3,10 +3,19 @@ from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey, TIMESTA
 from sqlalchemy.orm import relationship
 
 
-class Profile(Base):
+class ProfileFriendship(Base):
     __schema__ = 'prod'
 
-    created_by_id = Column(Integer, ForeignKey('prod.users.id'))
+    profile_from_id = Column(Integer, ForeignKey('prod.profiles.id'))
+    profile_to_id = Column(Integer, ForeignKey('prod.profiles.id'))
+    safety_correction = Column(Integer)
+    profile_from = relationship("Profile", back_populates="friendships", foreign_keys=[profile_from_id], uselist=True,
+                                viewonly=True)
+    profile_to = relationship("Profile", uselist=False, viewonly=True, foreign_keys=[profile_to_id])
+
+
+class Profile(Base):
+    __schema__ = 'prod'
 
     name = Column(String)
     birth_date = Column(Date)
@@ -34,3 +43,5 @@ class Profile(Base):
 
     complexities = relationship("ComplexLike", back_populates="profile")
     wishlist = relationship("WishlistItem", back_populates="profile")
+    friendships = relationship("ProfileFriendship", back_populates="profile_from",
+                               foreign_keys=[ProfileFriendship.profile_from_id])
