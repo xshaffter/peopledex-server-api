@@ -8,7 +8,7 @@ from fastapi import Depends
 from src.db.dals.auth import oauth2_schema
 from ..db.dals.user import UserDAL
 from ..db.models.profile import Profile, ProfileFriendship
-from ..db.dals.profile import ProfileDAL
+from ..db.dals.profile import ProfileDAL, ProfileFriendshipDAL
 from ..schemas.profile import ProfileRequestSchema, ProfileSchema, SimplifiedProfileSchema
 
 
@@ -25,17 +25,16 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         return items
 
     @post('/create', response_model=ProfileSchema)
-    async def custom_create(self, request: BasicRequestSchema[ProfileRequestSchema],
+    def create(self, request: BasicRequestSchema[ProfileRequestSchema],
                             token: str = Depends(oauth2_schema),
-                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL, auto_commit=False))):
+                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
-        friendship_dal = dal.get_dal(CRUDDal, ProfileFriendship)
+        friendship_dal = dal.get_dal(ProfileFriendshipDAL)
         user = user_dal.get_current_user(token)
         data = request.data.model_dump()
         result = dal.create(data)
         friendship = friendship_dal.create(dict(profile_from_id=user.profile_id, profile_to_id=result.id, safety_correction=0))
 
-        print(friendship)
         friendship_dal.commit()
         return result
 
