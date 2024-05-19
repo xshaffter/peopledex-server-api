@@ -30,9 +30,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
                             dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
         user = user_dal.get_current_user(token)
-
-        data = request.data.dict()
-        data['created_by_id'] = user.id
+        data = request.data.model_dump()
         result = dal.create(data)
         return result
 
@@ -40,8 +38,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
     async def free_create(self, request: BasicRequestSchema[ProfileRequestSchema],
                             dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
 
-        data = request.data.dict()
-        data['created_by_id'] = 2
+        data = request.data.model_dump()
         result = dal.create(data)
         return result
 
@@ -56,7 +53,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         if desired_profile.created_by_id != user.id:
             return HTTP_404_DETAIL
 
-        data = request.data.dict()
+        data = request.data.model_dump()
         dal.update(data, id=profile_id)
         return HTTP_200_UPDATED
 
