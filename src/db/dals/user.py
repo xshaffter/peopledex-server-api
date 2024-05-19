@@ -60,15 +60,3 @@ class UserDAL(CRUDDal[User]):
         self._db.commit()
         self._db.refresh(user)
         return user
-
-    def add_moderator(self, user, new_moderator):
-        # from ..models import Moderation
-        # moderation_dal = CRUDDal[Moderation](self._db, Moderation, auto_commit=False)
-        # moderation_dal.create(dict(moderated_id=user.id, moderator_id=new_moderator.id))
-
-        user.moderators.append(new_moderator)
-        self.commit()
-
-    def delete_moderator(self, user, new_moderator):
-        user.moderators.remove(new_moderator)
-        self.commit()

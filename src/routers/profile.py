@@ -36,6 +36,15 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         result = dal.create(data)
         return result
 
+    @post('/free/create', response_model=ProfileSchema)
+    async def free_create(self, request: BasicRequestSchema[ProfileRequestSchema],
+                            dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
+
+        data = request.data.dict()
+        data['created_by_id'] = 2
+        result = dal.create(data)
+        return result
+
     @put('/detail/{profile_id}', response_model=HTTPResponseModel)
     async def update_detail(self, profile_id: int, request: BasicRequestSchema[ProfileRequestSchema],
                             token: str = Depends(oauth2_schema),
