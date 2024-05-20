@@ -16,8 +16,6 @@ class ProfileSchema(BaseModel):
     vertical_image_url: Optional[str]
 
     # Measures
-    height_cm: Optional[int]
-    weight_kg: Optional[float]
     feet_size: Optional[str]
     bottoms_size: Optional[str]
     tops_size: Optional[str]
@@ -54,8 +52,6 @@ class ProfileRequestSchema(BaseModel):
     vertical_image_url: Optional[str]
 
     # Measures
-    height_cm: Optional[int]
-    weight_kg: Optional[float]
     feet_size: Optional[str]
     bottoms_size: Optional[str]
     tops_size: Optional[str]
