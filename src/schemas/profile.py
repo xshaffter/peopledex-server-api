@@ -89,5 +89,12 @@ class SimplifiedProfileSchema(BaseModel):
             days = days + 365
         return days
 
+    @computed_field
+    @property
+    def computed_birth(self) -> Optional[int]:
+        if self.birth_date is None:
+            return None
+        return self.birth_date.strftime("%B, %d")
+
     class Config:
         from_attributes = True
