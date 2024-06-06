@@ -13,7 +13,7 @@ from src.db.models.profile import Profile
 
 class StaticsRouter(BaseRouter):
 
-    @get('/{route}')
+    @get('/{route:path}')
     def get_item(self, route: str):
         aws = AwsConfig()
         bucket = 'para-mada-personal-bucket'
