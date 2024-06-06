@@ -16,8 +16,6 @@ class ProfileSchema(BaseModel):
     vertical_image_url: Optional[str]
 
     # Measures
-    height_cm: Optional[int]
-    weight_kg: Optional[float]
     feet_size: Optional[str]
     bottoms_size: Optional[str]
     tops_size: Optional[str]
@@ -36,6 +34,13 @@ class ProfileSchema(BaseModel):
     complexities: List[ComplexLikeSchema]
     wishlist: List[WishlistItemSchema]
 
+    @computed_field
+    @property
+    def computed_birth(self) -> Optional[int]:
+        if self.birth_date is None:
+            return None
+        return self.birth_date.strftime("%B, %d")
+
     class Config:
         from_attributes = True
 
@@ -47,8 +52,6 @@ class ProfileRequestSchema(BaseModel):
     vertical_image_url: Optional[str]
 
     # Measures
-    height_cm: Optional[int]
-    weight_kg: Optional[float]
     feet_size: Optional[str]
     bottoms_size: Optional[str]
     tops_size: Optional[str]
@@ -88,6 +91,13 @@ class SimplifiedProfileSchema(BaseModel):
         if days < 0:
             days = days + 365
         return days
+
+    @computed_field
+    @property
+    def computed_birth(self) -> Optional[int]:
+        if self.birth_date is None:
+            return None
+        return self.birth_date.strftime("%B, %d")
 
     class Config:
         from_attributes = True
