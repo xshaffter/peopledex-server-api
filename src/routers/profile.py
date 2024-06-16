@@ -43,10 +43,10 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
                             token: str = Depends(oauth2_schema),
                             dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
+        friendship_dal = dal.get_dal(ProfileFriendshipDAL)
         user = user_dal.get_current_user(token)
-        desired_profile = dal.get_object_or_404(id=profile_id)
 
-        if not user.profile.friendships.filter(ProfileFriendship.profile_to_id==desired_profile.id).exists():
+        if not friendship_dal.get_object_or_404(profile_from_id=profile_id, profile_to_id=user.profile_id):
             return HTTP_404_DETAIL
 
         data = request.data.model_dump()
