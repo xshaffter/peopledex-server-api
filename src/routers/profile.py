@@ -46,7 +46,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         user = user_dal.get_current_user(token)
         desired_profile = dal.get_object_or_404(id=profile_id)
 
-        if desired_profile.created_by_id != user.id:
+        if not user.profile.friendships.filter(id=desired_profile.id).exists():
             return HTTP_404_DETAIL
 
         data = request.data.model_dump()
