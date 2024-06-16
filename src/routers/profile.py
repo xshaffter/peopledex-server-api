@@ -4,6 +4,7 @@ from common.fastapi.db import CRUDDal, get_dal_dependency
 from common.fastapi.routing import GenericBaseCRUDRouter, get, post, put, delete
 from common.fastapi.schemas import BasicRequestSchema, HTTPResponseModel, HTTP_200_UPDATED, HTTP_404_DETAIL
 from fastapi import Depends, HTTPException
+from fastapi_pagination import Page, paginate
 
 from src.db.dals.auth import oauth2_schema
 from ..db.dals.user import UserDAL
@@ -13,16 +14,6 @@ from ..schemas.profile import ProfileRequestSchema, ProfileSchema, SimplifiedPro
 
 
 class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequestSchema]):
-
-    @get('/simple', response_model=List[SimplifiedProfileSchema])
-    async def get_simple_list(self,
-                              token: str = Depends(oauth2_schema),
-                              dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))) -> List:
-        user_dal = dal.get_dal(UserDAL)
-        user = user_dal.get_current_user(token)
-
-        items = dal.list(created_by_id=user.id)
-        return items
 
     @post('/create', response_model=ProfileSchema)
     def create(self, request: BasicRequestSchema[ProfileRequestSchema],

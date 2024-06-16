@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
+from fastapi_pagination import add_pagination
 from .middlewares.auth_middleware import AuthMiddleware
 from .routers.authentication import AuthRouter
 from .routers.complex_like import ComplexLikeRouter
@@ -21,7 +22,7 @@ main_app.include_router(UserRouter(prefix='/users', tags=['users']))
 main_app.include_router(ComplexLikeRouter(prefix='/complex-likes', tags=['complex-likes']))
 main_app.include_router(WishlistItemRouter(prefix='/wishlist', tags=['wishlist']))
 main_app.include_router(AuthRouter(prefix='/auth', tags=['authentication']))
-
+add_pagination(main_app)
 
 # noinspection PyUnusedLocal
 @main_app.exception_handler(HTTPException)

@@ -1,3 +1,5 @@
+from datetime import date
+
 from common.fastapi.db import Base
 from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
@@ -45,3 +47,17 @@ class Profile(Base):
     wishlist = relationship("WishlistItem", back_populates="profile")
     friendships = relationship("ProfileFriendship", back_populates="profile_from", lazy='dynamic',
                                foreign_keys=[ProfileFriendship.profile_from_id])
+
+    @classmethod
+    def __sort__(cls, item: 'Profile') -> int:
+        birthday = item.birth_date
+        if birthday is None:
+            return 9999999999
+
+        today = date.today()
+        this_year = (date(today.year, birthday.month, birthday.day) - today).days
+        if this_year >= 0:
+            return this_year
+
+        next_year = (date(today.year+1, birthday.month, birthday.day) - today).days
+        return next_year
