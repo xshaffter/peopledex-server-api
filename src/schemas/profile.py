@@ -1,7 +1,8 @@
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, computed_field
+import pydantic
+from pydantic import BaseModel, computed_field, model_validator
 
 from .complex_like import ComplexLikeSchema
 from .wishlist_item import WishlistItemSchema
