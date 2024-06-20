@@ -24,8 +24,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         user = user_dal.get_current_user(token)
         data = request.data.model_dump()
         result = dal.create(data)
-        friendship = friendship_dal.create(
-            dict(profile_from_id=user.profile_id, profile_to_id=result.id, safety_correction=0))
+        friendship_dal.create(dict(profile_from_id=user.profile_id, profile_to_id=result.id, safety_correction=0))
 
         friendship_dal.commit()
         return result
@@ -47,7 +46,8 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         user = user_dal.get_current_user(token)
 
         print(profile_id, user.profile_id)
-        if not friendship_dal.get_object_or_404(profile_from_id=user.profile_id, profile_to_id=profile_id):
+
+        if not friendship_dal.get_object_or_404(profile_from_id=user.profile_id, profile_to_id=profile_id) and profile_id != user.profile_id:
             return HTTP_404_DETAIL
 
         data = request.data.model_dump()
@@ -59,9 +59,9 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
                      dal: ProfileDAL = Depends(get_dal_dependency(ProfileDAL))):
         user_dal = dal.get_dal(UserDAL)
         user = user_dal.get_current_user(token)
-        desired_profile = dal.get_object_or_404(id=profile_id)
+        friendship_dal = dal.get_dal(ProfileFriendshipDAL)
 
-        if desired_profile.created_by_id != user.id:
+        if not friendship_dal.get_object_or_404(profile_from_id=user.profile_id, profile_to_id=profile_id) and profile_id != user.profile_id:
             return HTTP_404_DETAIL
 
         dal.delete(id=profile_id)
