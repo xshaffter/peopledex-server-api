@@ -75,6 +75,9 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
         user = user_dal.get_current_user(token)
         desired_profile = dal.get_object_or_404(id=profile_id)
 
+        if user.profile_id == profile_id:
+            return desired_profile
+
         if not user.profile.friendships.filter(ProfileFriendship.profile_to_id == profile_id).all():
             raise HTTPException(status_code=404)
 
