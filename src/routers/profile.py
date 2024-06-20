@@ -47,7 +47,7 @@ class ProfileRouter(GenericBaseCRUDRouter[Profile, ProfileSchema, ProfileRequest
 
         print(profile_id, user.profile_id)
 
-        if not friendship_dal.get_object_or_404(profile_from_id=user.profile_id, profile_to_id=profile_id) and profile_id != user.profile_id:
+        if profile_id != user.profile_id and not friendship_dal.get_object_or_404(profile_from_id=user.profile_id, profile_to_id=profile_id):
             return HTTP_404_DETAIL
 
         data = request.data.model_dump()
